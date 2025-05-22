@@ -30,6 +30,7 @@ export function LoginForm() {
       await signIn(email, password)
       router.push("/")
     } catch (error: any) {
+      console.error("Login error:", error)
       setError(error.message || "Failed to sign in")
     } finally {
       setIsLoading(false)
@@ -44,6 +45,7 @@ export function LoginForm() {
       await signInWithGoogle()
       router.push("/")
     } catch (error: any) {
+      console.error("Google sign-in error:", error)
       setError(error.message || "Failed to sign in with Google")
     } finally {
       setIsLoading(false)

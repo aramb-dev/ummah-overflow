@@ -40,18 +40,28 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [authError, setAuthError] = useState<Error | null>(null)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user)
-      } else {
-        setUser(null)
-      }
-      setLoading(false)
-    })
+    try {
+      const unsubscribe = onAuthStateChanged(
+        auth,
+        (user) => {
+          setUser(user)
+          setLoading(false)
+        },
+        (error) => {
+          console.error("Auth state change error:", error)
+          setAuthError(error)
+          setLoading(false)
+        },
+      )
 
-    return () => unsubscribe()
+      return () => unsubscribe()
+    } catch (error) {
+      console.error("Auth initialization error:", error)
+      setLoading(false)
+    }
   }, [])
 
   const signUp = async (email: string, password: string, displayName: string) => {
@@ -63,19 +73,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await updateProfile(user, { displayName })
 
       // Create a user document in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        email: user.email,
-        displayName,
-        username: displayName.toLowerCase().replace(/\s+/g, ""),
-        createdAt: serverTimestamp(),
-        reputation: 0,
-        badges: {
-          gold: 0,
-          silver: 0,
-          bronze: 0,
-        },
-      })
+      try {
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          email: user.email,
+          displayName,
+          username: displayName.toLowerCase().replace(/\s+/g, ""),
+          createdAt: serverTimestamp(),
+          reputation: 0,
+          badges: {
+            gold: 0,
+            silver: 0,
+            bronze: 0,
+          },
+        })
+      } catch (firestoreError) {
+        console.error("Error creating user document:", firestoreError)
+        // Continue even if Firestore fails - the user is still authenticated
+      }
 
       return
     } catch (error) {
@@ -99,24 +114,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const user = userCredential.user
 
       // Check if the user document already exists
-      const userDoc = await getDoc(doc(db, "users", user.uid))
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid))
 
-      if (!userDoc.exists()) {
-        // Create a user document in Firestore if it doesn't exist
-        await setDoc(doc(db, "users", user.uid), {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          username: user.displayName?.toLowerCase().replace(/\s+/g, "") || `user${user.uid.substring(0, 6)}`,
-          photoURL: user.photoURL,
-          createdAt: serverTimestamp(),
-          reputation: 0,
-          badges: {
-            gold: 0,
-            silver: 0,
-            bronze: 0,
-          },
-        })
+        if (!userDoc.exists()) {
+          // Create a user document in Firestore if it doesn't exist
+          await setDoc(doc(db, "users", user.uid), {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            username: user.displayName?.toLowerCase().replace(/\s+/g, "") || `user${user.uid.substring(0, 6)}`,
+            photoURL: user.photoURL,
+            createdAt: serverTimestamp(),
+            reputation: 0,
+            badges: {
+              gold: 0,
+              silver: 0,
+              bronze: 0,
+            },
+          })
+        }
+      } catch (firestoreError) {
+        console.error("Error checking/creating user document:", firestoreError)
+        // Continue even if Firestore fails - the user is still authenticated
       }
 
       return
@@ -151,6 +171,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signInWithGoogle,
     logout,
     resetPassword,
+  }
+
+  // If there's an auth initialization error, render children anyway
+  // This allows the app to function even if Firebase auth has issues
+  if (authError) {
+    console.error("Auth provider error:", authError)
   }
 
   return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>

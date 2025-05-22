@@ -1,4 +1,4 @@
-import { initializeApp, getApps } from "firebase/app"
+import { initializeApp, getApps, getApp } from "firebase/app"
 import { getAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
 
@@ -12,16 +12,23 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-// Initialize Firebase only if it hasn't been initialized already
-let app
-if (typeof window !== "undefined" && !getApps().length) {
-  // Only initialize on the client side
-  app = initializeApp(firebaseConfig)
-} else if (getApps().length > 0) {
-  app = getApps()[0]
+// Initialize Firebase
+let firebaseApp
+if (!getApps().length) {
+  firebaseApp = initializeApp(firebaseConfig)
 } else {
-  app = initializeApp(firebaseConfig)
+  firebaseApp = getApp()
 }
 
-export const auth = getAuth(app)
-export const db = getFirestore(app)
+// Initialize Firebase services
+const auth = getAuth(firebaseApp)
+const db = getFirestore(firebaseApp)
+
+// Use emulators for local development if needed
+if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
+  // Uncomment these lines to use Firebase emulators during development
+  // connectAuthEmulator(auth, 'http://localhost:9099');
+  // connectFirestoreEmulator(db, 'localhost', 8080);
+}
+
+export { auth, db }
