@@ -8,7 +8,7 @@ import { AuthProvider } from "@/context/auth-context"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Ummah.dev - A Q&A Platform for Muslim Developers",
+  title: "UmmahOverflow - A Q&A Platform for Muslim Developers",
   description: "A respectful, ad-free space for Muslim developers to ask and answer technical questions",
     generator: 'v0.dev'
 }

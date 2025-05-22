@@ -118,7 +118,7 @@ export function FlagDialog({ open, onOpenChange, contentId, contentType }: FlagD
 
       toast({
         title: "Content flagged",
-        description: "Thank you for helping keep Ummah.dev a respectful community.",
+        description: "Thank you for helping keep UmmahOverflow a respectful community.",
       })
 
       // Close the dialog and reset form

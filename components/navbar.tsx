@@ -51,7 +51,7 @@ export function Navbar() {
             </SheetContent>
           </Sheet>
           <Link href="/home" className="flex items-center space-x-2">
-            <span className="font-bold text-xl">Ummah.dev</span>
+            <span className="font-bold text-xl">UmmahOverflow</span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <Link
