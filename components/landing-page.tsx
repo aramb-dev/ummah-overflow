@@ -11,7 +11,7 @@ export function LandingPage() {
       <header className="border-b">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-xl">Ummah.dev</span>
+            <span className="font-bold text-xl">UmmahOverflow</span>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" asChild className="hidden md:inline-flex">
@@ -42,7 +42,7 @@ export function LandingPage() {
                     A Q&A Platform for Muslim Developers
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Ummah.dev is a respectful, ad-free space for Muslim developers to ask and answer technical
+                    UmmahOverflow is a respectful, ad-free space for Muslim developers to ask and answer technical
                     questions.
                   </p>
                 </div>
@@ -245,7 +245,7 @@ export function LandingPage() {
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Join the Waitlist</h2>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Be the first to know when Ummah.dev launches
+                  Be the first to know when UmmahOverflow launches
                 </p>
               </div>
               <div className="w-full max-w-md space-y-2">
@@ -265,7 +265,7 @@ export function LandingPage() {
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">Open Source</h2>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Ummah.dev is built in the open. Contribute to the project on GitHub.
+                  UmmahOverflow is built in the open. Contribute to the project on GitHub.
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -281,7 +281,7 @@ export function LandingPage() {
       <footer className="border-t py-6 md:py-0">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-16 md:flex-row">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Ummah.dev. All rights reserved.
+            &copy; {new Date().getFullYear()} UmmahOverflow. All rights reserved.
           </p>
           <div className="flex gap-4">
             <Link href="/about" className="text-sm text-muted-foreground hover:underline">

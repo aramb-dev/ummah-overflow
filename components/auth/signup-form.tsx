@@ -62,7 +62,7 @@ export function SignupForm() {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle className="text-2xl">Create an account</CardTitle>
-        <CardDescription>Join the Ummah.dev community to ask and answer questions</CardDescription>
+        <CardDescription>Join the UmmahOverflow community to ask and answer questions</CardDescription>
       </CardHeader>
       <CardContent>
         {error && (
