@@ -1,42 +1,9 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { QuestionList } from "@/components/question-list"
 import { Sidebar } from "@/components/sidebar"
-import { useAuth } from "@/context/auth-context"
-import { Loader2 } from "lucide-react"
 
-export default function HomePage() {
-  const { user, loading } = useAuth()
-  const router = useRouter()
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  useEffect(() => {
-    if (isClient && !loading && !user) {
-      router.push("/")
-    }
-  }, [isClient, loading, user, router])
-
-  if (loading || !isClient) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-      </div>
-    )
-  }
-
-  if (!user) {
-    // This will be briefly shown before the redirect happens
-    return null
-  }
-
+export default function Home() {
   return (
     <div className="container py-6">
       <div className="flex flex-col md:flex-row gap-6">

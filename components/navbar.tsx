@@ -11,7 +11,6 @@ import { useTheme } from "next-themes"
 import { useAuth } from "@/context/auth-context"
 import { ModerationNavItem } from "@/components/moderation/moderation-nav-item"
 import { UserAvatar } from "@/components/user-avatar"
-import { AdminNavItem } from "@/components/admin/admin-nav-item"
 
 export function Navbar() {
   const pathname = usePathname()
@@ -80,7 +79,6 @@ export function Navbar() {
               Users
             </Link>
             <ModerationNavItem />
-            <AdminNavItem />
           </nav>
         </div>
         <div className="flex items-center gap-2">

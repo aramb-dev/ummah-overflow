@@ -8,14 +8,11 @@ import { useAuth } from "@/context/auth-context"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import type { User } from "@/lib/types"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
 
 export function ModeratorGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   const [isModerator, setIsModerator] = useState(false)
   const [isCheckingRole, setIsCheckingRole] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -31,9 +28,8 @@ export function ModeratorGuard({ children }: { children: React.ReactNode }) {
           const userData = userDoc.data() as User
           setIsModerator(userData.role === "moderator" || userData.role === "admin")
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error checking moderator status:", error)
-        setError("Unable to verify moderator status. Please try again later.")
       } finally {
         setIsCheckingRole(false)
       }
@@ -45,10 +41,10 @@ export function ModeratorGuard({ children }: { children: React.ReactNode }) {
   }, [user, loading])
 
   useEffect(() => {
-    if (!loading && !isCheckingRole && !user) {
-      router.push("/login")
+    if (!loading && !isCheckingRole && (!user || !isModerator)) {
+      router.push("/")
     }
-  }, [user, loading, isCheckingRole, router])
+  }, [user, isModerator, loading, isCheckingRole, router])
 
   if (loading || isCheckingRole) {
     return (
@@ -58,26 +54,8 @@ export function ModeratorGuard({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (error) {
-    return (
-      <div className="container py-10">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      </div>
-    )
-  }
-
-  if (!isModerator) {
-    return (
-      <div className="container py-10">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>You don't have permission to access this page.</AlertDescription>
-        </Alert>
-      </div>
-    )
+  if (!user || !isModerator) {
+    return null
   }
 
   return <>{children}</>

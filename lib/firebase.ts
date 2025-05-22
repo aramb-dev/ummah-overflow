@@ -2,7 +2,6 @@ import { initializeApp, getApps } from "firebase/app"
 import { getAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
 
-// Make sure we're using the NEXT_PUBLIC_ environment variables
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -14,13 +13,10 @@ const firebaseConfig = {
 
 // Initialize Firebase only if it hasn't been initialized already
 let app
-if (typeof window !== "undefined" && !getApps().length) {
-  // Only initialize on the client side
+if (!getApps().length) {
   app = initializeApp(firebaseConfig)
-} else if (getApps().length > 0) {
-  app = getApps()[0]
 } else {
-  app = initializeApp(firebaseConfig)
+  app = getApps()[0]
 }
 
 export const auth = getAuth(app)
