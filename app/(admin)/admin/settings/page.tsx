@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,10 +10,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react"
+import { doc, getDoc, setDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+import { useAuth } from "@/context/auth-context"
 
 export default function AdminSettingsPage() {
+  const { user } = useAuth()
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   // Site settings
   const [siteName, setSiteName] = useState("UmmahOverflow")
@@ -32,40 +37,176 @@ export default function AdminSettingsPage() {
   const [minAnswerLength, setMinAnswerLength] = useState(30)
   const [allowAnonymousQuestions, setAllowAnonymousQuestions] = useState(true)
 
-  const handleSaveSiteSettings = () => {
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const settingsDoc = await getDoc(doc(db, "settings", "site"))
+        if (settingsDoc.exists()) {
+          const data = settingsDoc.data()
+
+          // Site settings
+          if (data.site) {
+            setSiteName(data.site.name || "UmmahOverflow")
+            setSiteDescription(data.site.description || "A Q&A Platform for Muslim Developers")
+            setMaintenanceMode(data.site.maintenanceMode || false)
+            setRegistrationEnabled(data.site.registrationEnabled !== false)
+          }
+
+          // Email settings
+          if (data.email) {
+            setEmailFrom(data.email.from || "noreply@ummahoverflow.com")
+            setEmailReplyTo(data.email.replyTo || "support@ummahoverflow.com")
+            setEmailFooter(data.email.footer || "© UmmahOverflow. All rights reserved.")
+          }
+
+          // Content settings
+          if (data.content) {
+            setMaxQuestionTags(data.content.maxQuestionTags || 5)
+            setMinQuestionLength(data.content.minQuestionLength || 20)
+            setMinAnswerLength(data.content.minAnswerLength || 30)
+            setAllowAnonymousQuestions(data.content.allowAnonymousQuestions !== false)
+          }
+        }
+      } catch (error) {
+        console.error("Error loading settings:", error)
+        toast({
+          title: "Failed to load settings",
+          description: "An error occurred while loading the settings.",
+          variant: "destructive",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadSettings()
+  }, [toast])
+
+  const handleSaveSiteSettings = async () => {
+    if (!user) return
+
     setSaving(true)
-    // Simulate API call
-    setTimeout(() => {
-      setSaving(false)
+    try {
+      const settingsRef = doc(db, "settings", "site")
+      const settingsDoc = await getDoc(settingsRef)
+
+      const updatedSettings = {
+        ...(settingsDoc.exists() ? settingsDoc.data() : {}),
+        site: {
+          name: siteName,
+          description: siteDescription,
+          maintenanceMode,
+          registrationEnabled,
+          updatedAt: new Date(),
+          updatedBy: user.uid,
+        },
+      }
+
+      await setDoc(settingsRef, updatedSettings, { merge: true })
+
       toast({
         title: "Settings saved",
         description: "Your site settings have been saved successfully.",
       })
-    }, 1000)
+    } catch (error) {
+      console.error("Error saving settings:", error)
+      toast({
+        title: "Failed to save settings",
+        description: "An error occurred while saving the settings.",
+        variant: "destructive",
+      })
+    } finally {
+      setSaving(false)
+    }
   }
 
-  const handleSaveEmailSettings = () => {
+  const handleSaveEmailSettings = async () => {
+    if (!user) return
+
     setSaving(true)
-    // Simulate API call
-    setTimeout(() => {
-      setSaving(false)
+    try {
+      const settingsRef = doc(db, "settings", "site")
+      const settingsDoc = await getDoc(settingsRef)
+
+      const updatedSettings = {
+        ...(settingsDoc.exists() ? settingsDoc.data() : {}),
+        email: {
+          from: emailFrom,
+          replyTo: emailReplyTo,
+          footer: emailFooter,
+          updatedAt: new Date(),
+          updatedBy: user.uid,
+        },
+      }
+
+      await setDoc(settingsRef, updatedSettings, { merge: true })
+
       toast({
         title: "Email settings saved",
         description: "Your email settings have been saved successfully.",
       })
-    }, 1000)
+    } catch (error) {
+      console.error("Error saving email settings:", error)
+      toast({
+        title: "Failed to save email settings",
+        description: "An error occurred while saving the email settings.",
+        variant: "destructive",
+      })
+    } finally {
+      setSaving(false)
+    }
   }
 
-  const handleSaveContentSettings = () => {
+  const handleSaveContentSettings = async () => {
+    if (!user) return
+
     setSaving(true)
-    // Simulate API call
-    setTimeout(() => {
-      setSaving(false)
+    try {
+      const settingsRef = doc(db, "settings", "site")
+      const settingsDoc = await getDoc(settingsRef)
+
+      const updatedSettings = {
+        ...(settingsDoc.exists() ? settingsDoc.data() : {}),
+        content: {
+          maxQuestionTags,
+          minQuestionLength,
+          minAnswerLength,
+          allowAnonymousQuestions,
+          updatedAt: new Date(),
+          updatedBy: user.uid,
+        },
+      }
+
+      await setDoc(settingsRef, updatedSettings, { merge: true })
+
       toast({
         title: "Content settings saved",
         description: "Your content settings have been saved successfully.",
       })
-    }, 1000)
+    } catch (error) {
+      console.error("Error saving content settings:", error)
+      toast({
+        title: "Failed to save content settings",
+        description: "An error occurred while saving the content settings.",
+        variant: "destructive",
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Admin Settings</h1>
+          <p className="text-muted-foreground">Configure platform-wide settings</p>
+        </div>
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </div>
+    )
   }
 
   return (

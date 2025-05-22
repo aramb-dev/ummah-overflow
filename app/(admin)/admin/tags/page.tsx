@@ -379,7 +379,11 @@ export default function AdminTagsPage() {
                         <TableCell className="max-w-xs truncate">{tag.description}</TableCell>
                         <TableCell>{tag.count}</TableCell>
                         <TableCell>
-                          {tag.createdAt ? new Date(tag.createdAt.toDate()).toLocaleDateString() : "N/A"}
+                          {tag.createdAt
+                            ? typeof tag.createdAt.toDate === "function"
+                              ? new Date(tag.createdAt.toDate()).toLocaleDateString()
+                              : new Date(tag.createdAt).toLocaleDateString()
+                            : "N/A"}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
