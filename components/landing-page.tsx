@@ -56,14 +56,6 @@ export function LandingPage() {
                   <Check className="h-4 w-4 text-green-500" />
                   <span>No spam, unsubscribe anytime</span>
                 </div>
-                <div className="pt-4">
-                  <Button asChild variant="outline">
-                    <Link href="/home">
-                      Preview the platform
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
               </div>
               <img
                 alt="Ummah.dev Platform Preview"
