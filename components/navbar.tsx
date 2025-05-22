@@ -11,6 +11,7 @@ import { useTheme } from "next-themes"
 import { useAuth } from "@/context/auth-context"
 import { ModerationNavItem } from "@/components/moderation/moderation-nav-item"
 import { UserAvatar } from "@/components/user-avatar"
+import { AdminNavItem } from "@/components/admin/admin-nav-item"
 
 export function Navbar() {
   const pathname = usePathname()
@@ -47,6 +48,19 @@ export function Navbar() {
                 <Link href="/users" className="text-sm font-medium transition-colors hover:text-foreground/80">
                   Users
                 </Link>
+                <Link href="/ask" className="text-sm font-medium transition-colors hover:text-foreground/80">
+                  Ask Question
+                </Link>
+                {user?.isModerator && (
+                  <Link href="/moderation" className="text-sm font-medium transition-colors hover:text-foreground/80">
+                    Moderation
+                  </Link>
+                )}
+                {user?.isAdmin && (
+                  <Link href="/admin" className="text-sm font-medium transition-colors hover:text-foreground/80">
+                    Admin
+                  </Link>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
@@ -79,6 +93,7 @@ export function Navbar() {
               Users
             </Link>
             <ModerationNavItem />
+            <AdminNavItem />
           </nav>
         </div>
         <div className="flex items-center gap-2">
@@ -86,6 +101,10 @@ export function Navbar() {
             <Search className="absolute left-2.5 h-4 w-4 text-muted-foreground" />
             <Input type="search" placeholder="Search questions..." className="w-full pl-8 rounded-md bg-background" />
           </form>
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <Search className="h-5 w-5" />
+            <span className="sr-only">Search</span>
+          </Button>
           <Button
             variant="ghost"
             size="icon"

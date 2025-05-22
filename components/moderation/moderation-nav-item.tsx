@@ -31,6 +31,7 @@ export function ModerationNavItem() {
         }
       } catch (error) {
         console.error("Error checking moderator status:", error)
+        // Don't show the error to the user, just assume they're not a moderator
         setIsModerator(false)
       } finally {
         setLoading(false)

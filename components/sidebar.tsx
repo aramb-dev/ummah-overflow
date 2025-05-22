@@ -26,7 +26,7 @@ const topUsers = [
 
 export function Sidebar() {
   return (
-    <div className="w-full md:w-80 space-y-6">
+    <div className="w-full space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Popular Tags</CardTitle>
@@ -35,7 +35,7 @@ export function Sidebar() {
           <div className="flex flex-wrap gap-2">
             {popularTags.map((tag) => (
               <Link key={tag.name} href={`/tags/${tag.name}`}>
-                <Badge variant="secondary" className="rounded-md cursor-pointer">
+                <Badge variant="secondary" className="rounded-md cursor-pointer mb-1">
                   {tag.name}
                   <span className="ml-1 text-xs text-muted-foreground">×{tag.count}</span>
                 </Badge>
